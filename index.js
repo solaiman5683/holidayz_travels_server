@@ -21,37 +21,37 @@ const client = new MongoClient(uri, {
 const run = async () => {
 	try {
 		await client.connect();
-		const db = client.db('eCommerce_1');
-		const products = db.collection('products');
-		app.post('/products', async (req, res) => {
-			const product = req.body;
-			const result = await products.insertOne(product);
+		const db = client.db('holidays_travel');
+		const events = db.collection('events');
+		app.post('/events', async (req, res) => {
+			const event = req.body;
+			const result = await events.insertOne(event);
 			res.send(result.acknowledged);
 		});
-		app.get('/products', async (req, res) => {
-			const cursor = products.find({});
+		app.get('/events', async (req, res) => {
+			const cursor = events.find({});
 			const result = await cursor.toArray();
 			res.send(JSON.stringify(result));
 		});
-		app.delete('/products/:id', async (req, res) => {
+		app.delete('/events/:id', async (req, res) => {
 			const id = req.params.id;
 			const query = { _id: ObjectId(id) };
-			const result = await products.deleteOne(query);
+			const result = await events.deleteOne(query);
 			res.send(JSON.stringify(result));
 		});
-		app.get('/product/:id', async (req, res) => {
+		app.get('/events/:id', async (req, res) => {
 			const id = req.params.id;
 			const query = { _id: ObjectId(id) };
-			const result = await products.findOne(query);
+			const result = await events.findOne(query);
 			res.send(JSON.stringify(result));
 		});
-		app.put('/product/:id', async (req, res) => {
+		app.put('/events/:id', async (req, res) => {
 			const id = req.params.id;
-			const updateProduct = {
+			const updateEvents = {
 				$set: req.body,
 			};
 			const query = { _id: ObjectId(id) };
-			const result = await products.updateOne(query, updateProduct);
+			const result = await events.updateOne(query, updateEvents);
 			res.send(JSON.stringify(result));
 		});
 	} finally {
