@@ -62,7 +62,6 @@ const run = async () => {
 		// For Specific User
 		app.get('/my-events', async (req, res) => {
 			const id = req.query.user;
-			console.log(id);
 			const query = { user: id };
 			const result = await events.find(query).toArray();
 			res.send(JSON.stringify(result));
@@ -82,6 +81,10 @@ const run = async () => {
 			const booking = req.body;
 			const result = await bookings.insertOne(booking);
 			res.send(result.acknowledged);
+		});
+		app.get('/bookings', async (req, res) => {
+			const result = await bookings.find({}).toArray();
+			res.send(JSON.stringify(result));
 		});
 	} finally {
 		// await client.close();
