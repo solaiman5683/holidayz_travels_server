@@ -86,6 +86,24 @@ const run = async () => {
 			const result = await bookings.find({}).toArray();
 			res.send(JSON.stringify(result));
 		});
+		// For Specific User
+		app.get('/my-bookings', async (req, res) => {
+			const id = req.query.user;
+			console.log(id);
+			const query = { user: id };
+			const result = await bookings.find(query).toArray();
+			res.send(JSON.stringify(result));
+		});
+		// Approve Bookings
+		app.put('/bookings/:id', async (req, res) => {
+			const id = req.params.id;
+			const updateEvents = {
+				$set: req.body,
+			};
+			const query = { _id: ObjectId(id) };
+			const result = await bookings.updateOne(query, updateEvents);
+			res.send(JSON.stringify(result));
+		});
 	} finally {
 		// await client.close();
 	}
