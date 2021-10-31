@@ -112,8 +112,20 @@ const run = async () => {
 			res.send(result.acknowledged);
 		});
 		app.get('/blogs', async (req, res) => {
-			const result = await articles.find({}).toArray();
-			res.send(JSON.stringify(result));
+			const limit = req.query.limit;
+			console.log(limit);
+			if (limit) {
+				const cursor = articles
+					.find({})
+					.sort({ _id: -1 })
+					.limit(parseInt(limit));
+				const result = await cursor.toArray();
+				res.send(JSON.stringify(result));
+			} else {
+				const cursor = articles.find({});
+				const result = await cursor.toArray();
+				res.send(JSON.stringify(result));
+			}
 		});
 		app.get('/blogs/:id', async (req, res) => {
 			const id = req.params.id;
