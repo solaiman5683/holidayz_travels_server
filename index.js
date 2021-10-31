@@ -89,7 +89,6 @@ const run = async () => {
 		// For Specific User
 		app.get('/my-bookings', async (req, res) => {
 			const id = req.query.user;
-			console.log(id);
 			const query = { user: id };
 			const result = await bookings.find(query).toArray();
 			res.send(JSON.stringify(result));
