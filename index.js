@@ -28,6 +28,7 @@ const run = async () => {
 		// Selecting Collections
 		const events = db.collection('events');
 		const bookings = db.collection('orders');
+		const articles = db.collection('articles');
 
 		app.post('/events', async (req, res) => {
 			const event = req.body;
@@ -101,6 +102,23 @@ const run = async () => {
 			};
 			const query = { _id: ObjectId(id) };
 			const result = await bookings.updateOne(query, updateEvents);
+			res.send(JSON.stringify(result));
+		});
+
+		// Articles API
+		app.post('/blogs', async (req, res) => {
+			const blogs = req.body;
+			const result = await articles.insertOne(blogs);
+			res.send(result.acknowledged);
+		});
+		app.get('/blogs', async (req, res) => {
+			const result = await articles.find({}).toArray();
+			res.send(JSON.stringify(result));
+		});
+		app.get('/blogs/:id', async (req, res) => {
+			const id = req.params.id;
+			const query = { _id: ObjectId(id) };
+			const result = await articles.findOne(query);
 			res.send(JSON.stringify(result));
 		});
 	} finally {
