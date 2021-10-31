@@ -20,18 +20,32 @@ const client = new MongoClient(uri, {
 });
 const run = async () => {
 	try {
-		await client.connect();
+		await client.connect(() => {
+			console.log('Database connection established');
+		});
+		// DataBase
 		const db = client.db('holidays_travel');
+		// Selecting Collections
 		const events = db.collection('events');
+		const bookings = db.collection('orders');
+
 		app.post('/events', async (req, res) => {
 			const event = req.body;
 			const result = await events.insertOne(event);
 			res.send(result.acknowledged);
 		});
+
 		app.get('/events', async (req, res) => {
-			const cursor = events.find({});
-			const result = await cursor.toArray();
-			res.send(JSON.stringify(result));
+			const limit = req.query.limit;
+			if (limit) {
+				const cursor = events.find({}).sort({ _id: -1 }).limit(parseInt(limit));
+				const result = await cursor.toArray();
+				res.send(JSON.stringify(result));
+			} else {
+				const cursor = events.find({});
+				const result = await cursor.toArray();
+				res.send(JSON.stringify(result));
+			}
 		});
 		app.delete('/events/:id', async (req, res) => {
 			const id = req.params.id;
@@ -45,6 +59,14 @@ const run = async () => {
 			const result = await events.findOne(query);
 			res.send(JSON.stringify(result));
 		});
+		// For Specific User
+		app.get('/my-events', async (req, res) => {
+			const id = req.query.user;
+			console.log(id);
+			const query = { user: id };
+			const result = await events.find(query).toArray();
+			res.send(JSON.stringify(result));
+		});
 		app.put('/events/:id', async (req, res) => {
 			const id = req.params.id;
 			const updateEvents = {
@@ -53,6 +75,13 @@ const run = async () => {
 			const query = { _id: ObjectId(id) };
 			const result = await events.updateOne(query, updateEvents);
 			res.send(JSON.stringify(result));
+		});
+
+		// bookings API
+		app.post('/bookings', async (req, res) => {
+			const booking = req.body;
+			const result = await bookings.insertOne(booking);
+			res.send(result.acknowledged);
 		});
 	} finally {
 		// await client.close();
