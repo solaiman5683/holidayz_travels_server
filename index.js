@@ -104,7 +104,7 @@ const run = async () => {
 			res.send(JSON.stringify(result));
 		});
 	} finally {
-		// await client.close();
+		// await client.close().;
 	}
 };
 run().catch(console.dir);
